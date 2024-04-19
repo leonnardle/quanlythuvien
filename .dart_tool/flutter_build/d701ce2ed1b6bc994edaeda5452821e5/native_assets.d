@@ -1,0 +1,1 @@
+ C:\\Study\\Thuc\ Tap\\thuctap\\.dart_tool\\flutter_build\\d701ce2ed1b6bc994edaeda5452821e5\\native_assets.yaml: 
