@@ -4,11 +4,17 @@ import 'package:thuctap/components/buttonadd.dart';
 import 'package:thuctap/pages/book/addBook.dart';
 import 'package:thuctap/pages/book/editBook.dart';
 
+import '../../model/book.dart';
+
 class ListBook extends StatefulWidget {
-  const ListBook({Key? key});
-   _ListBookState createState() => _ListBookState();
+  final List<Book>? items;
+
+  ListBook({Key? key, this.items}) : super(key: key);
+
+  _ListBookState createState() => _ListBookState();
 }
 class _ListBookState extends State<ListBook> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,8 +58,9 @@ class _ListBookState extends State<ListBook> {
           Positioned.fill(
             top: 50,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: widget.items?.length,
               itemBuilder: (context, index) {
+                final book=widget.items?[index];
                 return GestureDetector(
                   child: Card(
                     margin:
@@ -77,31 +84,37 @@ class _ListBookState extends State<ListBook> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+
                                 Text(
-                                  'Sách ${index + 1}',
+                                  'Sách ${ book?.name}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
                                 ),
+
                                 SizedBox(height: 4),
-                                Text('Tên Sách: Tên sách ở đây'),
+                                Text(book!.publisher),
                                 SizedBox(height: 4),
-                                Text('Nhà Xuất Bản: Nhà xuất bản ở đây'),
+                                Text(book!.author),
                                 SizedBox(height: 4),
-                                Text('Tác Giả: Tác giả ở đây'),
+                                Text(book!.genre),
                                 SizedBox(height: 4),
-                                Text('Thể Loại: Thể loại ở đây'),
+                                Text(book!.description),
                                 SizedBox(height: 4),
-                                Text('Chi Tiết: Chi tiết sách ở đây'),
+                                Text(book!.quantity.toString()),
                               ],  
                             ),    
                           ),
                           IconButton(
                             onPressed: () {
-                              Navigator.push(
-                                context, MaterialPageRoute(
-                                  builder: (context) => EditBook()));
+                              Book? editbook=widget.items?[index];
+                              if (editbook != null) {
+                                Navigator.push(
+                                    context, MaterialPageRoute(
+                                    builder: (context) => EditBook(book:editbook)));
+                              }
+
                             },
                             icon: Icon(Icons.edit),
                           ),

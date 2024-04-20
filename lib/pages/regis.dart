@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:thuctap/components/button.dart';
-import 'package:thuctap/components/textfield.dart';
+
+import '../components/button.dart';
+import '../components/textfield.dart';
+
 
 class Regis extends StatelessWidget {
    Regis({super.key});

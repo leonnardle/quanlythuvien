@@ -9,6 +9,8 @@ import 'package:thuctap/pages/loanslip/loansliplist.dart';
 import 'package:thuctap/pages/paymentslip/paymentsliplist.dart';
 import 'package:thuctap/pages/borrowbook/borrowbooklist.dart';
 
+import '../model/book.dart';
+
 class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context){
@@ -88,12 +90,13 @@ class NavBar extends StatelessWidget {
           ),
           ListTile(
             title: Text('Quản Lý Thông Tin Sách'),
-            onTap: ()=> {
+            onTap: () async {
+               List<Book> bookList= await fetchBooks();
                Navigator.push(
                 context, MaterialPageRoute(
-                  builder:(context) => ListBook()
+                  builder:(context) => ListBook(items: bookList,)
                   )
-              )
+              );
             },
           ),
           ListTile(

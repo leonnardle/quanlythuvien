@@ -4,8 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:thuctap/components/navbar.dart';
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
- 
+  String name;
+  MyHomePage({super.key, required this.name});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,17 +14,17 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
           title: Text('Quản Lý Thư Viện'),
       ),
-      body: Stack( 
+      body: Stack(
         children:[ Image.asset(
           'assets/images/31.png',
           fit: BoxFit.cover,
-          width: double.infinity, 
+          width: double.infinity,
           height: double.infinity,
           ),
           Positioned(
             top: 20, // Độ dời vị trí lên phía trên (20 pixels)
-            left: 0, 
-            right: 0, 
+            left: 0,
+            right: 0,
             child:Center(
             child: Text(
               'Quản Lý Thư Viện',
@@ -37,8 +38,8 @@ class MyHomePage extends StatelessWidget {
           ),
           Positioned(
             top: 0, // Độ dời vị trí lên phía trên (20 pixels)
-            left: 938, 
-            right: 0, 
+            left: 938,
+            right: 0,
            child: Image.asset(
             'assets/images/logo.png',
             width: 100,

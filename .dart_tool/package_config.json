@@ -9,7 +9,7 @@
     },
     {
       "name": "bloc",
-      "rootUri": "file:///C:/Users/trung/AppData/Local/Pub/Cache/hosted/pub.dev/bloc-8.1.4",
+      "rootUri": "file:///C:/Users/trung/AppData/Local/Pub/Cache/hosted/pub.dev/bloc-7.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -87,7 +87,7 @@
     },
     {
       "name": "flutter_bloc",
-      "rootUri": "file:///C:/Users/trung/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_bloc-8.1.5",
+      "rootUri": "file:///C:/Users/trung/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_bloc-7.3.3",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -320,7 +320,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2024-04-18T21:18:51.353703Z",
+  "generated": "2024-04-19T09:14:40.160871Z",
   "generator": "pub",
   "generatorVersion": "3.3.3"
 }

@@ -3,24 +3,36 @@ import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
 
+import '../../model/book.dart';
+
 class EditBook extends StatefulWidget {
-  EditBook({Key? key});
+  Book book;
+  EditBook({Key? key, required this.book}) : super(key: key);
 
   @override
   _EditBookState createState() => _EditBookState();
 }
 
 class _EditBookState extends State<EditBook> {
-  final TextEditingController namesachController = TextEditingController();
-  final TextEditingController authorController = TextEditingController();
-  final TextEditingController publisherController = TextEditingController();
-  final TextEditingController genreController = TextEditingController();
-  final TextEditingController detailController = TextEditingController();
-  final TextEditingController pictureEditBookController = TextEditingController();
+   late final TextEditingController namesachController ;
+  late final TextEditingController authorController ;
+  late final TextEditingController publisherController ;
+  late final TextEditingController genreController ;
+  late final TextEditingController detailController ;
+  late final TextEditingController pictureEditBookController ;
+
   String? imageURL;
 
-  void addsach() {
+  void editBook() async {
     if (imageURL != null && imageURL!.isNotEmpty) {
+      widget.book.name = namesachController.text;
+      widget.book.author = authorController.text;
+      widget.book.description = detailController.text;
+      widget.book.genre = genreController.text;
+      widget.book.image = pictureEditBookController.text;
+      widget.book.publisher = publisherController.text;
+      await updateBook(widget.book);
+      Navigator.pop(context);
       // Thêm sách
     } else {
       showDialog(
@@ -30,7 +42,8 @@ class _EditBookState extends State<EditBook> {
           content: Text('Vui lòng kiểm tra lại đường dẫn.'),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: ()  {
+
                 Navigator.pop(context);
               },
               child: Text('OK'),
@@ -41,6 +54,29 @@ class _EditBookState extends State<EditBook> {
     }
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    namesachController = TextEditingController(text: widget.book?.name);
+    authorController = TextEditingController(text: widget.book?.author);
+    publisherController = TextEditingController(text: widget.book?.publisher);
+    genreController = TextEditingController(text: widget.book?.genre);
+    detailController = TextEditingController(text: widget.book?.description);
+    pictureEditBookController = TextEditingController(text: widget.book?.image);
+    imageURL=pictureEditBookController.text;
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    namesachController.dispose();
+    authorController.dispose();
+    publisherController.dispose();
+    genreController.dispose();
+    detailController.dispose();
+    pictureEditBookController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,6 +146,7 @@ class _EditBookState extends State<EditBook> {
                           MyTextField(controller: detailController, hintText: 'Chi Tiết', obScureText: false),
                           const SizedBox(height: 10),
                           Text('Hình Ảnh', style: TextStyle(fontWeight: FontWeight.bold)),
+
                           MyTextField(
                             controller: pictureEditBookController,
                             hintText: 'Link Hình Ảnh',
@@ -119,10 +156,8 @@ class _EditBookState extends State<EditBook> {
                                 // Kiểm tra xem đường dẫn có hợp lệ không
                                 Uri? uri = Uri.tryParse(value);
                                 if (uri != null && uri.isAbsolute) {
-                                  // Nếu hợp lệ, gán vào imageURL
                                   imageURL = value;
                                 } else {
-                                  // Nếu không hợp lệ, gán imageURL thành null
                                   imageURL = null;
                                 }
                               });
@@ -135,10 +170,10 @@ class _EditBookState extends State<EditBook> {
                               imageURL!,
                               height: 100,
                               width: 50,
-                          
+
                             ),
                           MyButton(
-                            onTap: addsach,
+                            onTap: editBook,
                             text: 'Sửa Thông Tin Sách',
                           ),
                         ],
