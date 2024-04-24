@@ -5,6 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/model/author.dart';
+import 'package:thuctap/pages/author/authorlist.dart';
+import 'package:thuctap/rest/author_function.dart';
 
 class AddAuthor extends StatefulWidget {
    AddAuthor({super.key});
@@ -12,14 +15,22 @@ class AddAuthor extends StatefulWidget {
 }
 class _AddAuthorState extends State<AddAuthor> {
   //controller
-  final TextEditingController nameauthorController = TextEditingController();
-  final TextEditingController countryController = TextEditingController();
-  final TextEditingController storyController = TextEditingController();
+  late TextEditingController idauthorController = TextEditingController();
+  late TextEditingController nameauthorController = TextEditingController();
+  late TextEditingController countryController = TextEditingController();
+  late TextEditingController storyController = TextEditingController();
  
 
   //butonadd
-  void addAu(){
-
+  void addAu()async{
+  Author author=Author();
+  author.id=idauthorController.text;
+  author.name=nameauthorController.text;
+  author.country=countryController.text;
+  author.story=storyController.text;
+  await insertAuthor(author);
+  List<Author>  list=await fetchAuthor();
+  Navigator.push(context, MaterialPageRoute(builder: (context)=>ListAuthor(items: list)));
   }
 
 
@@ -76,6 +87,9 @@ class _AddAuthorState extends State<AddAuthor> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          Text('mã Tác Giả' , style: TextStyle(fontWeight: FontWeight.bold)),
+                          MyTextField(controller: idauthorController, hintText: 'mã Tác Giả', obScureText: false),
+                          const SizedBox(height: 10),
                           Text('Tên Tác Giả' , style: TextStyle(fontWeight: FontWeight.bold)),
                   MyTextField(controller: nameauthorController, hintText: 'Tên Tác Giả', obScureText: false),
                   const SizedBox(height: 10),

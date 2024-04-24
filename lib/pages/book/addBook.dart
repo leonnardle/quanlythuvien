@@ -1,7 +1,13 @@
+import 'dart:js_util';
+
 import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/model/book.dart';
+import 'package:thuctap/rest/book_function.dart';
+
+import 'booklist.dart';
 
 class AddBook extends StatefulWidget {
   AddBook({Key? key});
@@ -11,6 +17,7 @@ class AddBook extends StatefulWidget {
 }
 
 class _AddBookState extends State<AddBook> {
+  final TextEditingController masachController = TextEditingController();
   final TextEditingController namesachController = TextEditingController();
   final TextEditingController authorController = TextEditingController();
   final TextEditingController publisherController = TextEditingController();
@@ -19,9 +26,24 @@ class _AddBookState extends State<AddBook> {
   final TextEditingController pictureAddBookController = TextEditingController();
   String? imageURL;
 
-  void addsach() {
+  void addSach() async{
     if (imageURL != null && imageURL!.isNotEmpty) {
       // Thêm sách
+      Book book=Book();
+      book.setId(masachController.text);
+      book.setName(namesachController.text);
+      book.setAuthor(authorController.text);
+      book.setPublisher(publisherController.text);
+      book.setGenre(genreController.text);
+      book.setDescription(detailController.text);
+      book.setImage(pictureAddBookController.text);
+      await insertBook(book);
+      List<Book> bookList= await fetchBooks();
+      Navigator.push(
+          context, MaterialPageRoute(
+          builder:(context) => ListBook(items: bookList,)
+      )
+      );
     } else {
       showDialog(
         context: context,
@@ -94,6 +116,8 @@ class _AddBookState extends State<AddBook> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          Text('ma Sách', style: TextStyle(fontWeight: FontWeight.bold)),
+                          MyTextField(controller: masachController, hintText: 'ma Sách', obScureText: false),
                           Text('Tên Sách', style: TextStyle(fontWeight: FontWeight.bold)),
                           MyTextField(controller: namesachController, hintText: 'Tên Sách', obScureText: false),
                           const SizedBox(height: 10),
@@ -148,7 +172,7 @@ class _AddBookState extends State<AddBook> {
                           ),
                          
                           MyButton(
-                            onTap: addsach,
+                            onTap: addSach,
                             text: 'Thêm Sách',
                           ),
                         ],

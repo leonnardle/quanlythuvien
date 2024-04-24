@@ -1,28 +1,75 @@
+import 'dart:js_util';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:thuctap/components/dropdownbutton.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/pages/reader/readerlist.dart';
+
+import '../../model/reader.dart';
+import '../../rest/reader_function.dart';
 
 class EditReader extends StatefulWidget {
-   EditReader({super.key});
+  Reader reader;
+   EditReader({super.key,required this.reader});
 _EditReaderState createState() => _EditReaderState();
 }
 
 class _EditReaderState extends State<EditReader> {
   //controller
-  final TextEditingController nameReaderController = TextEditingController();
-  final TextEditingController emailReaderController = TextEditingController();
-  final TextEditingController phoneReaderController = TextEditingController();
-  final TextEditingController loanReaderController = TextEditingController();
+  late TextEditingController nameReaderController = TextEditingController();
+  late TextEditingController emailReaderController = TextEditingController();
+  late TextEditingController phoneReaderController = TextEditingController();
+  late List danhsachphieu=[];
+  late bool _isLoading = true;
+  String? selectedloan;
   //butonadd
-  void adddocgia(){
+  void adddocgia()async{
+  if(selectedloan!=null){
+
+    widget.reader.loanId=selectedloan!;
+    widget.reader.phonenumber=phoneReaderController.text;
+    widget.reader.email=emailReaderController.text;
+    widget.reader.name=nameReaderController.text;
+    await updatereader(widget.reader);
+    List<Reader>list=await fetchreaders();
+    Navigator.push(context, MaterialPageRoute(builder: (context) =>ListReader(items: list) ));
+  }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(widget.reader.id);
+    nameReaderController=TextEditingController(text: widget.reader.name);
+    emailReaderController=TextEditingController(text: widget.reader.email);
+    phoneReaderController=TextEditingController(text: widget.reader.phonenumber);
+    getList();
+    print(widget.reader.id);
 
   }
-
-
+  void getList() async {
+    try {
+      danhsachphieu = await fetchLoanId();
+      setState(() {
+        _isLoading = false; // Đặt trạng thái tải dữ liệu thành false khi đã tải xong
+      });
+    } catch (e) {
+      print('Error fetching loan id: $e');
+    }
+  }
+ @override
+  void dispose() {
+    // TODO: implement dispose
+   nameReaderController.dispose();
+   emailReaderController.dispose();
+   phoneReaderController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +133,15 @@ class _EditReaderState extends State<EditReader> {
                   MyTextField(controller: phoneReaderController, hintText: 'Tên Khu Vực', obScureText: false),
                   const SizedBox(height: 10),
                   Text('Phiếu Mượn' , style: TextStyle(fontWeight: FontWeight.bold)),
-                  MyTextField(controller: loanReaderController, hintText: 'Tên Khu Vực', obScureText: false),
+                  ListItems(items: danhsachphieu, onChanged: (newvalue){
+                  for(int i=0;i<danhsachphieu.length;i++){
+                      if(equal(danhsachphieu![i], widget.reader.loanId)){
+                        setState(() {
+                          selectedloan=newvalue;
+                        });
+                      }
+                    }
+                  },),
                   const SizedBox(height: 10),
 
                           MyButton(

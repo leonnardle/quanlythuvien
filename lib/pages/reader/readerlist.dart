@@ -6,8 +6,11 @@ import 'package:thuctap/pages/book/editBook.dart';
 import 'package:thuctap/pages/reader/addreader.dart';
 import 'package:thuctap/pages/reader/editreader.dart';
 
+import '../../model/reader.dart';
+
 class ListReader extends StatefulWidget {
-  const ListReader({Key? key});
+  List<Reader> items;
+   ListReader({Key? key,required this.items});
    _ListReaderState createState() => _ListReaderState();
 }
 class _ListReaderState extends State<ListReader> {
@@ -54,8 +57,9 @@ class _ListReaderState extends State<ListReader> {
           Positioned.fill(
             top: 50,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: widget.items.length,
               itemBuilder: (context, index) {
+                Reader reader=widget.items![index];
                 return GestureDetector(
                   child: Card(
                     margin:
@@ -76,13 +80,13 @@ class _ListReaderState extends State<ListReader> {
                                   ),
                                 ),
                                 SizedBox(height: 4),
-                                Text('Tên Đọc Giả:'),
+                                Text('Tên Đọc Giả: ${reader.name}'),
                                 SizedBox(height: 4),
-                                Text('Email:'),
+                                Text('Email: ${reader.email}'),
                                 SizedBox(height: 4),
-                                Text('Số Điện Thoại:'),
+                                Text('Số Điện Thoại: ${reader.phonenumber}'),
                                 SizedBox(height: 4),
-                                Text('Phiếu Mượn:'),
+                                Text('Phiếu Mượn: ${reader.loanId}'),
                                
                               ],  
                             ),    
@@ -91,7 +95,7 @@ class _ListReaderState extends State<ListReader> {
                             onPressed: () {
                               Navigator.push(
                                 context, MaterialPageRoute(
-                                  builder: (context) => EditReader()));
+                                  builder: (context) => EditReader(reader: reader,)));
                             },
                             icon: Icon(Icons.edit),
                           ),

@@ -3,9 +3,14 @@ import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/buttonadd.dart';
 import 'package:thuctap/pages/author/editauthor.dart';
 import 'package:thuctap/pages/author/addauthor.dart';
+import 'package:thuctap/rest/author_function.dart';
+
+import '../../function/showDialog.dart';
+import '../../model/author.dart';
 
 class ListAuthor extends StatefulWidget {
-  const ListAuthor({Key? key});
+  List<Author> items;
+   ListAuthor({Key? key,required this.items});
   _ListAuthorState createState() => _ListAuthorState();
 }
 class _ListAuthorState extends State<ListAuthor> {
@@ -52,8 +57,9 @@ class _ListAuthorState extends State<ListAuthor> {
           Positioned.fill(
             top: 50,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: widget.items.length,
               itemBuilder: (context, index) {
+                Author author=widget.items![index];
                 return GestureDetector(
                  
                   child: Card(
@@ -74,11 +80,11 @@ class _ListAuthorState extends State<ListAuthor> {
                                 ),
                               ),
                               SizedBox(height: 4),
-                              Text('Tên Tác Giả:'),
+                              Text('Tên Tác Giả: ${author.name}'),
                               SizedBox(height: 4),
-                              Text('Quê Quán:'),
+                              Text('Quê Quán: ${author.country}'),
                               SizedBox(height: 4),
-                              Text('Thể Loại Truyện:'),
+                              Text('tiểu sử: ${author.story}'),
                               
                             ],
                           ),
@@ -89,13 +95,23 @@ class _ListAuthorState extends State<ListAuthor> {
                                 onPressed: () {
                                  Navigator.push(
                                 context, MaterialPageRoute(
-                                  builder: (context) => EditAuthor()));
+                                  builder: (context) => EditAuthor(author: author,)));
                                 },
                               ),
                               IconButton(
                                 icon: Icon(Icons.delete),
                                 onPressed: () {
                                   // Xử lý sự kiện khi nhấn nút "Xóa"
+                                  showDeleteConfirmationDialog(context, (confirm) async{
+                                    if(confirm){
+                                      await deleteAuthor(widget.items![index]);
+                                      if (author != null) {
+                                        setState(() {
+                                          widget.items?.removeAt(index);
+                                        });
+                                      }
+                                    }
+                                  });
                                 },
                               ),
                             ],

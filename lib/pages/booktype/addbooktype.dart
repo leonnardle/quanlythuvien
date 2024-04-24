@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/model/booktype.dart';
+import 'package:thuctap/pages/booktype/booktypelist.dart';
+import 'package:thuctap/rest/booktype_function.dart';
 
 
 class AddBookType extends StatefulWidget {
@@ -11,9 +14,18 @@ _AddBookTypeState createState() => _AddBookTypeState();
 
 class _AddBookTypeState extends State<AddBookType> {
   final TextEditingController tenloaisachController = TextEditingController();
+  final TextEditingController maloaisachController = TextEditingController();
 
-  void addloaisach() {
+  void addLoaisach() async{
     // Thêm mã logic để xử lý việc thêm loại sách vào đây
+    if(maloaisachController.text!=null&&tenloaisachController.text!=null) {
+      BookType bookType = BookType();
+      bookType.setId(maloaisachController.text);
+      bookType.setName(tenloaisachController.text);
+      await insertBooktype(bookType);
+      List<BookType> list=await fetchBookType();
+      Navigator.push(context, MaterialPageRoute(builder:(context)=> ListBookType(items: list,)));
+    }
   }
 
 
@@ -44,11 +56,14 @@ class _AddBookTypeState extends State<AddBookType> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('mã Loại Sách', style: TextStyle(fontWeight: FontWeight.bold)),
+                MyTextField(controller: maloaisachController, hintText: 'mã Loại Sách', obScureText: false),
+                  SizedBox(height: 10),
                   Text('Tên Loại Sách', style: TextStyle(fontWeight: FontWeight.bold)),
-                MyTextField(controller: tenloaisachController, hintText: 'Tên Loại Sách', obScureText: false),
-                SizedBox(height: 10),
+                  MyTextField(controller: tenloaisachController, hintText: 'Tên Loại Sách', obScureText: false),
+                  SizedBox(height: 10),
                   MyButton(
-                    onTap: addloaisach,
+                    onTap: addLoaisach,
                     text: 'Thêm Loại Sách',
                   ),
                 ],

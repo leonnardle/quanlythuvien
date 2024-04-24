@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/buttonadd.dart';
+import 'package:thuctap/function/showDialog.dart';
+import 'package:thuctap/model/Employee.dart';
 import 'package:thuctap/pages/employee/addemployee.dart';
 import 'package:thuctap/pages/employee/editemployee.dart';
+import 'package:thuctap/rest/employee_function.dart';
 
 class ListEmployee extends StatefulWidget {
-  const ListEmployee({Key? key});
+  late List<Employee>? items;
+
+  ListEmployee({Key? key,required this.items});
 
 @override
 _ListEmployeeState createState() => _ListEmployeeState();
@@ -53,8 +58,9 @@ _ListEmployeeState createState() => _ListEmployeeState();
           Positioned.fill(
             top: 50,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: widget.items!.length,
               itemBuilder: (context, index) {
+                Employee employee=widget.items![index];
                 return GestureDetector(
                  
                   child: Card(
@@ -75,13 +81,17 @@ _ListEmployeeState createState() => _ListEmployeeState();
                                 ),
                               ),
                               SizedBox(height: 4),
-                              Text('Tên Nhân Viên:'),
+                              Text('Tên Nhân Viên: ${employee.name}'),
                               SizedBox(height: 4),
-                              Text('Email:'),
+                              Text('Email: ${employee.email}'),
                               SizedBox(height: 4),
-                              Text('Lương:'),
+                              Text('Lương: ${employee.salary}'),
                               SizedBox(height: 4),
-                              Text('Số Điện Thoại:'),
+                              Text('Số Điện Thoại: ${employee.phonenumber}'),
+                              SizedBox(height: 4),
+                              Text('số ngày công: ${employee.worknumber}'),
+                              SizedBox(height: 4),
+                              Text('mật khẩu: ${employee.password}'),
                             ],
                           ),
                           Row(
@@ -91,13 +101,25 @@ _ListEmployeeState createState() => _ListEmployeeState();
                                 onPressed: () {
                                   Navigator.push(
                                 context, MaterialPageRoute(
-                                  builder: (context) => EditEmployee()));
+                                  builder: (context) => EditEmployee(employee: widget.items![index],)));
                                 },
                               ),
                               IconButton(
                                 icon: Icon(Icons.delete),
-                                onPressed: () {
+                                onPressed: ()async {
                                   // Xử lý sự kiện khi nhấn nút "Xóa"
+                                 showDeleteConfirmationDialog(context, (confirm) async{
+                                   if(confirm){
+                                     await deleteEmployee(widget.items![index]);
+                                     Employee? book = widget.items?[index];
+                                     if (book != null) {
+                                       setState(() {
+                                         widget.items?.removeAt(index);
+                                       });
+                                     }
+                                   }
+                                 });
+
                                 },
                               ),
                             ],

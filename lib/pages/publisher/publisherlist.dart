@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/buttonadd.dart';
-import 'package:thuctap/pages/book/addBook.dart';
-import 'package:thuctap/pages/book/editBook.dart';
+import 'package:thuctap/function/showDialog.dart';
+
 import 'package:thuctap/pages/publisher/addpublisher.dart';
 import 'package:thuctap/pages/publisher/editpublisher.dart';
+import 'package:thuctap/rest/publisher_function.dart';
+
+import '../../model/publisher.dart';
+
 
 class ListPublisher extends StatefulWidget {
-  const ListPublisher({Key? key});
+  List<Publisher> items;
+   ListPublisher({Key? key,required this.items});
    _ListPublisherState createState() => _ListPublisherState();
 }
 class _ListPublisherState extends State<ListPublisher> {
@@ -54,8 +59,9 @@ class _ListPublisherState extends State<ListPublisher> {
           Positioned.fill(
             top: 50,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: widget.items.length,
               itemBuilder: (context, index) {
+                Publisher publisher=widget.items[index];
                 return GestureDetector(
                   child: Card(
                     margin:
@@ -76,9 +82,9 @@ class _ListPublisherState extends State<ListPublisher> {
                                   ),
                                 ),
                                 SizedBox(height: 4),
-                                Text('Tên Nhà Xuất Bản:'),
+                                Text('Tên Nhà Xuất Bản: ${publisher.name}'),
                                 SizedBox(height: 4),
-                                Text('Khu Vực:'),
+                                Text('Khu Vực: ${publisher.area}'),
                                 
                               ],  
                             ),    
@@ -87,13 +93,23 @@ class _ListPublisherState extends State<ListPublisher> {
                             onPressed: () {
                               Navigator.push(
                                 context, MaterialPageRoute(
-                                  builder: (context) => EditPublisher()));
+                                  builder: (context) => EditPublisher(publisher: publisher,)));
                             },
                             icon: Icon(Icons.edit),
                           ),
                            IconButton(
                             onPressed: () {
                               // Xử lý sự kiện xóa sách
+                              showDeleteConfirmationDialog(context, (confirm)async {
+                                if(confirm){
+                                  await deletePublisher(publisher);
+                                  setState(() {
+                                    if(publisher!=null){
+                                      widget.items.removeAt(index);
+                                    }
+                                  });
+                                }
+                              });
                             },
                             icon: Icon(Icons.delete),
                           ),

@@ -5,24 +5,41 @@ import 'package:flutter/widgets.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/pages/author/authorlist.dart';
+import 'package:thuctap/rest/author_function.dart';
+
+import '../../model/author.dart';
 
 class EditAuthor extends StatefulWidget {
-   EditAuthor({super.key});
+  Author author;
+   EditAuthor({super.key,required this.author});
    _EditAuthorState createState() => _EditAuthorState();
 }
 class _EditAuthorState extends State<EditAuthor> {
   //controller
-  final TextEditingController nameauthorController = TextEditingController();
-  final TextEditingController countryController = TextEditingController();
-  final TextEditingController storyController = TextEditingController();
+  late TextEditingController nameauthorController = TextEditingController();
+  late TextEditingController countryController = TextEditingController();
+  late TextEditingController storyController = TextEditingController();
  
 
   //butonadd
-  void addAu(){
-
+  void addAu()async{
+      widget.author.story=storyController.text;
+      widget.author.name=nameauthorController.text;
+      widget.author.country=countryController.text;
+      await updateAuthor(widget.author);
+      List<Author> list=await fetchAuthor();
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>ListAuthor(items: list)));
   }
 
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    nameauthorController=TextEditingController(text: widget.author.name);
+    countryController=TextEditingController(text: widget.author.country);
+    storyController=TextEditingController(text: widget.author.story);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -4,6 +4,8 @@ import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
 
 import '../../model/book.dart';
+import '../../rest/book_function.dart';
+import 'booklist.dart';
 
 class EditBook extends StatefulWidget {
   Book book;
@@ -14,12 +16,12 @@ class EditBook extends StatefulWidget {
 }
 
 class _EditBookState extends State<EditBook> {
-   late final TextEditingController namesachController ;
-  late final TextEditingController authorController ;
-  late final TextEditingController publisherController ;
-  late final TextEditingController genreController ;
-  late final TextEditingController detailController ;
-  late final TextEditingController pictureEditBookController ;
+   late  TextEditingController namesachController ;
+  late  TextEditingController authorController ;
+  late  TextEditingController publisherController ;
+  late  TextEditingController genreController ;
+  late  TextEditingController detailController ;
+  late  TextEditingController pictureEditBookController ;
 
   String? imageURL;
 
@@ -32,7 +34,12 @@ class _EditBookState extends State<EditBook> {
       widget.book.image = pictureEditBookController.text;
       widget.book.publisher = publisherController.text;
       await updateBook(widget.book);
-      Navigator.pop(context);
+      List<Book> bookList= await fetchBooks();
+      Navigator.push(
+          context, MaterialPageRoute(
+          builder:(context) => ListBook(items: bookList,)
+      )
+      );
       // Thêm sách
     } else {
       showDialog(
@@ -43,7 +50,6 @@ class _EditBookState extends State<EditBook> {
           actions: [
             TextButton(
               onPressed: ()  {
-
                 Navigator.pop(context);
               },
               child: Text('OK'),

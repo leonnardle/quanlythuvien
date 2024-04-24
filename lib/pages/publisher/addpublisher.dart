@@ -5,6 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/model/publisher.dart';
+import 'package:thuctap/pages/publisher/publisherlist.dart';
+import 'package:thuctap/rest/publisher_function.dart';
 
 class AddPublisher extends StatefulWidget {
   AddPublisher({super.key});
@@ -13,12 +16,19 @@ class AddPublisher extends StatefulWidget {
 
 class _AddPublisherState extends State<AddPublisher> {
   //controller
-  final TextEditingController tennxbController = TextEditingController();
-  final TextEditingController khuvucController = TextEditingController();
+  late TextEditingController manxbController = TextEditingController();
+  late TextEditingController tennxbController = TextEditingController();
+  late TextEditingController khuvucController = TextEditingController();
 
   //butonadd
-  void addnxb(){
-
+  void addnxb()async{
+    Publisher publisher=Publisher();
+    publisher.id=manxbController.text;
+    publisher.name=tennxbController.text;
+    publisher.area=khuvucController.text;
+    await insertPublisher(publisher);
+    List<Publisher> items=await fetchPublishers();
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>ListPublisher(items: items)));
   }
 
  
@@ -74,6 +84,9 @@ class _AddPublisherState extends State<AddPublisher> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('Mã Nhà Xuất Bản' , style: TextStyle(fontWeight: FontWeight.bold)),
+                  MyTextField(controller: manxbController, hintText: 'Mã Nhà Xuất bản', obScureText: false),
+                  const SizedBox(height: 10),
                   Text('Tên Nhà Xuất Bản' , style: TextStyle(fontWeight: FontWeight.bold)),
                   MyTextField(controller: tennxbController, hintText: 'Tên Nhà Xuất bản', obScureText: false),
                   const SizedBox(height: 10),

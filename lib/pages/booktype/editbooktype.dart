@@ -2,21 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/model/booktype.dart';
+import 'package:thuctap/pages/booktype/booktypelist.dart';
+import 'package:thuctap/rest/booktype_function.dart';
 
 
 class EditBookType extends StatefulWidget {
-  EditBookType({Key? key}) : super(key: key);
+  BookType book;
+  EditBookType({Key? key,required this.book}) : super(key: key);
   _EditBookTypeState createState() => _EditBookTypeState();
 }
 
 class _EditBookTypeState extends State<EditBookType> {
-  final TextEditingController tenloaisachController = TextEditingController();
+  late TextEditingController tenloaisachController = TextEditingController();
 
-  void addloaisach() {
+  void updateloaisach() async{
     // Thêm mã logic để xử lý việc thêm loại sách vào đây
+
+    widget.book.setName(tenloaisachController.text);
+    await updateBooktype(widget.book);
+    List<BookType> bookList= await fetchBookType();
+    Navigator.push(
+        context, MaterialPageRoute(
+        builder:(context) => ListBookType(items: bookList,)
+    )
+    );
+
   }
 
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    tenloaisachController=TextEditingController(text: widget.book.name);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,10 +64,10 @@ class _EditBookTypeState extends State<EditBookType> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Tên Loại Sách', style: TextStyle(fontWeight: FontWeight.bold)),
-                MyTextField(controller: tenloaisachController, hintText: 'Tên Loại Sách', obScureText: false),
-                SizedBox(height: 10),
+                  MyTextField(controller: tenloaisachController, hintText: 'Tên Loại Sách', obScureText: false),
+                  SizedBox(height: 10),
                   MyButton(
-                    onTap: addloaisach,
+                    onTap: updateloaisach,
                     text: 'Sửa Loại Sách',
                   ),
                 ],

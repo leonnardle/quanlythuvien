@@ -1,18 +1,28 @@
 
-class Employee {
-  final String id;
-  final String name;
-  final String email;
-  final String password;
-  final double salary;
-  final String phonenumber;
 
-  Employee({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.password,
-    required this.salary,
-    required this.phonenumber,
-  });
+
+class Employee {
+  late String id;
+  late String name;
+  late String email;
+  late String password;
+  late double salary;
+  late int worknumber;
+  late String phonenumber;
+
+  Employee();
+
+  factory Employee.fromJson(Map<String, dynamic> data) {
+    Employee employee = Employee();
+    employee.id = data['manv'] ?? '';
+    employee.name = data['tennv'] ?? '';
+    employee.email = data['email'] ?? '';
+    employee.phonenumber = data['sdt'] ?? '';
+    employee.password = data['matkhau'] ?? '';
+    employee.worknumber = data['songaycong'] ?? '';
+    employee.salary = data['luong'] ?? '';
+    return employee;
+  }
+
+
 }

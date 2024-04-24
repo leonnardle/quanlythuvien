@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
+import 'package:thuctap/components/numbertextfield.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/model/Employee.dart';
+import 'package:thuctap/pages/employee/employeelist.dart';
+import 'package:thuctap/rest/employee_function.dart';
 
 class AddEmployee extends StatefulWidget {
   AddEmployee({Key? key}) : super(key: key);
@@ -17,9 +21,24 @@ class _AddEmployeeState extends State<AddEmployee> {
   final TextEditingController passController = TextEditingController();
   final TextEditingController salaryController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-
-  void addEm() {
+  final TextEditingController idController = TextEditingController();
+  final TextEditingController workNumberController = TextEditingController();
+  void addEm() async{
     // Thêm mã logic để xử lý việc thêm nhân viên vào đây
+    if(idController.text!=null) {
+      Employee employee = Employee();
+      employee.id = idController.text;
+      employee.name = nameController.text;
+      employee.email = emailController.text;
+      employee.phonenumber = phoneController.text;
+      employee.password = passController.text;
+      int songaycong= int.parse(workNumberController.text);
+      employee.worknumber=songaycong;
+      employee.salary = double.parse(salaryController.text);
+      await insertEmployee(employee);
+      List<Employee> items=await fetchEmployee();
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>ListEmployee(items: items)));
+    }
   }
 
   @override
@@ -75,20 +94,27 @@ class _AddEmployeeState extends State<AddEmployee> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+
+                          Text('mã nhân viên', style: TextStyle(fontWeight: FontWeight.bold)),
+                          SizedBox(height: 10),
+                          MyTextField(controller: idController, hintText: 'mã nhân viên', obScureText: false),
                           Text('Tên Nhân Viên', style: TextStyle(fontWeight: FontWeight.bold)),
                           MyTextField(controller: nameController, hintText: 'Tên Nhân Viên', obScureText: false),
                           SizedBox(height: 10),
                           Text('Mật Khẩu', style: TextStyle(fontWeight: FontWeight.bold)),
                           MyTextField(controller: passController, hintText: 'Mật Khẩu', obScureText: false),
                           SizedBox(height: 10),
+                          Text('số ngày công', style: TextStyle(fontWeight: FontWeight.bold)),
+                          NumTextField(controller: workNumberController, hintText: 'số ngày công',  obscureText: false,),
+                          SizedBox(height: 10),
                           Text('Email', style: TextStyle(fontWeight: FontWeight.bold)),
                           MyTextField(controller: emailController, hintText: 'Email', obScureText: false),
                           SizedBox(height: 10),
                           Text('Lương', style: TextStyle(fontWeight: FontWeight.bold)),
-                          MyTextField(controller: salaryController, hintText: 'Lương', obScureText: false),
+                          NumTextField(controller: salaryController, hintText: 'Lương', obscureText: false, ),
                           SizedBox(height: 10),
                           Text('Số Điện Thoại', style: TextStyle(fontWeight: FontWeight.bold)),
-                          MyTextField(controller: phoneController, hintText: 'Số Điện Thoại', obScureText: false),
+                          NumTextField(controller: phoneController, hintText: 'Số Điện Thoại', obscureText: false,),
                           SizedBox(height: 20),
                           MyButton(
                             onTap: addEm,

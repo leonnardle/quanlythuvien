@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/buttonadd.dart';
+import 'package:thuctap/function/showDialog.dart';
+import 'package:thuctap/model/booktype.dart';
 import 'package:thuctap/pages/booktype/addbooktype.dart';
 import 'package:thuctap/pages/booktype/editbooktype.dart';
+import 'package:thuctap/rest/book_function.dart';
+import 'package:thuctap/rest/booktype_function.dart';
 
 class ListBookType extends StatefulWidget {
-  const ListBookType({super.key});
+  late List<BookType>? items;
+
+  ListBookType({Key? key, this.items}) : super(key: key);
   _ListBookTypeState createState() => _ListBookTypeState();
 }
 
@@ -54,8 +60,9 @@ class _ListBookTypeState extends State<ListBookType> {
           Positioned.fill(
             top: 50,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: widget.items!.length,
               itemBuilder: (context, index) {
+                BookType booktype=widget.items![index];
                 return GestureDetector(
                   child: Card(
                     margin:
@@ -76,21 +83,38 @@ class _ListBookTypeState extends State<ListBookType> {
                                   ),
                                 ),
                                 SizedBox(height: 4),
-                                Text('Loại Sách: Tên loại ở đây'),
+                                Text('mã loại : ${booktype.id}'),
+                                SizedBox(height: 4),
+                                Text('tên loại : ${booktype.name}'),
                               ],  
                             ),    
                           ),
                           IconButton(
                             onPressed: () {
+
                               Navigator.push(
                                 context, MaterialPageRoute(
-                                  builder: (context) => EditBookType()));
+                                  builder: (context) => EditBookType(book: widget.items![index],)));
                             },
                             icon: Icon(Icons.edit),
                           ),
                            IconButton(
                             onPressed: () {
                               // Xử lý sự kiện xóa sách
+
+                              showDeleteConfirmationDialog(context, (confirm) async {
+                                if(confirm){
+                                  await deleteBooktype(widget.items![index]);
+                                  BookType? book = widget.items?[index];
+                                  if (book != null) {
+                                    setState(() {
+                                      widget.items?.removeAt(index);
+                                    });
+                                  }
+
+                                }
+                              }
+                              );
                             },
                             icon: Icon(Icons.delete),
                           ),

@@ -2,26 +2,50 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:thuctap/bloc/publiser/publiser_event.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/pages/publisher/publisherlist.dart';
+import 'package:thuctap/rest/publisher_function.dart';
+
+import '../../model/publisher.dart';
 
 class EditPublisher extends StatefulWidget {
-   EditPublisher({super.key});
+  Publisher publisher;
+  EditPublisher({Key? key, required this.publisher}) : super(key: key);
 _EditPublisherState createState() => _EditPublisherState();
 }
 
 class _EditPublisherState extends State<EditPublisher> {
   //controller
-  final TextEditingController tennxbController = TextEditingController();
-  final TextEditingController khuvucController = TextEditingController();
+  late  TextEditingController tennxbController = TextEditingController();
+  late TextEditingController khuvucController = TextEditingController();
 
   //butonadd
-  void addloaisach(){
-
+  void addloaisach() async{
+    widget.publisher.name=tennxbController.text;
+    widget.publisher.area=khuvucController.text;
+    await updatePublisher(widget.publisher);
+    List<Publisher> list=await fetchPublishers();
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>ListPublisher(items: list,)));
   }
 
- 
+ @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    tennxbController=TextEditingController(text: widget.publisher.name);
+    khuvucController=TextEditingController(text: widget.publisher.area);
+
+ }
+ @override
+  void dispose() {
+    // TODO: implement dispose
+   tennxbController.dispose();
+   khuvucController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

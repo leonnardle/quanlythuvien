@@ -1,13 +1,17 @@
 class Publisher {
-  final String id;
-  final String name;
-  final String area;
+  late String id;
+  late String name;
+  late String area;
 
 
-  Publisher({
-    required this.id,
-    required this.name,
-    required this.area,
+  Publisher();
 
-  });
+  factory Publisher.fromJson(Map<String, dynamic> data) {
+    Publisher publisher = Publisher();
+    publisher.id = data['manxb'] ?? '';
+    publisher.name = data['tennxb'] ?? '';
+    publisher.area = data['khuvuc'] ?? '';
+    return publisher;
+  }
+
 }

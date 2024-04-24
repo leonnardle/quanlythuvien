@@ -5,15 +5,17 @@ import 'package:thuctap/pages/book/addBook.dart';
 import 'package:thuctap/pages/book/editBook.dart';
 
 import '../../model/book.dart';
+import '../../rest/book_function.dart';
 
 class ListBook extends StatefulWidget {
-  final List<Book>? items;
+  late List<Book>? items;
 
   ListBook({Key? key, this.items}) : super(key: key);
 
   _ListBookState createState() => _ListBookState();
 }
 class _ListBookState extends State<ListBook> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +76,7 @@ class _ListBookState extends State<ListBook> {
                             width: 80,
                             height: 120,
                             child: Image.network(
-                              "https://hoc10.monkeyuni.net/E_Learning/page_public/weNu4P5lGC23ozvy58eXenxvxfUWyyqg.jpg",
+                            book!.image,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -101,8 +103,7 @@ class _ListBookState extends State<ListBook> {
                                 Text(book!.genre),
                                 SizedBox(height: 4),
                                 Text(book!.description),
-                                SizedBox(height: 4),
-                                Text(book!.quantity.toString()),
+
                               ],  
                             ),    
                           ),
@@ -118,9 +119,42 @@ class _ListBookState extends State<ListBook> {
                             },
                             icon: Icon(Icons.edit),
                           ),
-                           IconButton(
+                          IconButton(
                             onPressed: () {
-                              // Xử lý sự kiện xóa sách
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Xác nhận xóa sách"),
+                                    content: Text("Bạn có chắc chắn muốn xóa cuốn sách này không?"),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false); // Đóng dialog và trả về giá trị false (không xác nhận)
+                                        },
+                                        child: Text("Hủy"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true); // Đóng dialog và trả về giá trị true (xác nhận)
+                                        },
+                                        child: Text("Xóa", style: TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ).then((confirmed) async {
+                                if (confirmed == true) {
+                                  // Nếu người dùng xác nhận xóa sách
+                                  await deleteBook(widget.items![index]);
+                                  Book? book = widget.items?[index];
+                                  if (book != null) {
+                                    setState(() {
+                                      widget.items?.removeAt(index);
+                                    });
+                                  }
+                                }
+                              });
                             },
                             icon: Icon(Icons.delete),
                           ),

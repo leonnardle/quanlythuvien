@@ -110,7 +110,6 @@ class _LoginPageState extends State<LoginPage> {
                         BlocProvider.of<LoginBloc>(context).add(LoginButtonPressed(emailController.text, passwordController.text));
                         final state=BlocProvider.of<LoginBloc>(context).state;
                         if(state is LoginSuccess){
-
                           Navigator.push(context, MaterialPageRoute(builder: (context)=> MyHomePage(name: emailController.text,)));
                         }
                       },
