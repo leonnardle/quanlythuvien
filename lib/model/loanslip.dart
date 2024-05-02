@@ -1,12 +1,26 @@
+DateTime? parseDateTime(dynamic value) {
+  if (value is DateTime) {
+    return value;
+  } else if (value is String) {
+    return DateTime.tryParse(value);
+  }
+  return null;
+}
+
 class LoanSlip {
-  final String idSlip;
-  final String readerName;
-  final String idBook;
-  final bool status;
-  final DateTime loanDay;
-  final DateTime paymentDay; 
+  late String id;
+  late String idBook;
+  late String idreader;
+  late String loanDay;
 
+  LoanSlip();
 
-  LoanSlip({required this.idSlip,required this.readerName,required this.idBook,required this.status,required this.loanDay, required this.paymentDay
-  });
+  factory LoanSlip.fromJson(Map<String, dynamic> data) {
+    LoanSlip book = LoanSlip();
+    book.id = data['maphieu'] ?? '';
+    book.idBook = data['masach'] ?? '';
+    book.idreader = data['madocgia'] ?? '';
+    book.loanDay = parseDateTime(data['ngaymuon'])?.toString() ?? '';
+    return book;
+  }
 }

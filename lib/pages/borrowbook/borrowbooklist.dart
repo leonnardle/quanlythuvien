@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/buttonadd.dart';
+import 'package:thuctap/model/book.dart';
+import 'package:thuctap/model/borrowbook.dart';
 import 'package:thuctap/pages/booktype/addbooktype.dart';
 import 'package:thuctap/pages/booktype/editbooktype.dart';
 import 'package:thuctap/pages/borrowbook/addborrowbook.dart';
 import 'package:thuctap/pages/borrowbook/editborrowbook.dart';
+import 'package:thuctap/rest/bookborrow_function.dart';
+
+import '../../function/showDialog.dart';
 
 class ListBorrowBook extends StatefulWidget {
-  const ListBorrowBook({super.key});
+  late List<BookBorrow>? items;
+  ListBorrowBook({super.key,required this.items});
 _ListBorrowBookState createState() => _ListBorrowBookState();
 }
 
@@ -57,8 +63,9 @@ class _ListBorrowBookState extends State<ListBorrowBook> {
           Positioned.fill(
             top: 50,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: widget.items!.length,
               itemBuilder: (context, index) {
+                BookBorrow book=widget.items![index];
                 return GestureDetector(
                   child: Card(
                     margin:
@@ -71,7 +78,7 @@ class _ListBorrowBookState extends State<ListBorrowBook> {
                             width: 80,
                             height: 120,
                             child: Image.network(
-                              "https://hoc10.monkeyuni.net/E_Learning/page_public/weNu4P5lGC23ozvy58eXenxvxfUWyyqg.jpg",
+                              book.image,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -87,14 +94,16 @@ class _ListBorrowBookState extends State<ListBorrowBook> {
                                     fontSize: 16,
                                   ),
                                 ),
+                                Text('mã mượn Sách: ${book.idborrow.toString()}'),
                                 SizedBox(height: 4),
-                                Text('Tên Sách: Tên loại ở đây'),
+                                Text('Tên Sách: ${book.bookname}'),
                                 SizedBox(height: 4),
-                                Text('Tên Đọc Giả: Tên đọc giả ở đây'),
+                                Text('Mã Đọc Giả: ${book.idreader}'),
                                 SizedBox(height: 4),
-                                Text('Mã Phiếu Mượn: Mã Phiếu Mượn ở đây'),
+                                Text('Mã phiếu mượn: ${book.loanid}'),
                                 SizedBox(height: 4),
-                                Text('Mã Sách: Mã Sách ở đây'),
+                                Text('Mã Sách: ${book.idbook}'),
+
                               ],  
                             ),    
                           ),
@@ -102,13 +111,25 @@ class _ListBorrowBookState extends State<ListBorrowBook> {
                             onPressed: () {
                               Navigator.push(
                                 context, MaterialPageRoute(
-                                  builder: (context) => EditBorrowBook()));
+                                  builder: (context) => EditBorrowBook(book: book,)));
                             },
                             icon: Icon(Icons.edit),
                           ),
                            IconButton(
                             onPressed: () {
-                              // Xử lý sự kiện xóa sách
+                              showDeleteConfirmationDialog(context, (confirm) async {
+                                if(confirm){
+                                  await deleteBookborrow(widget.items![index]);
+                                  BookBorrow? book = widget.items?[index];
+                                  if (book != null) {
+                                    setState(() {
+                                      widget.items?.removeAt(index);
+                                    });
+                                  }
+
+                                }
+                              }
+                              );
                             },
                             icon: Icon(Icons.delete),
                           ),

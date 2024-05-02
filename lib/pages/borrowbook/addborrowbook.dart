@@ -1,3 +1,5 @@
+import 'dart:js_util';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -5,6 +7,13 @@ import 'package:flutter/widgets.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/model/borrowbook.dart';
+import 'package:thuctap/rest/bookborrow_function.dart';
+import 'package:thuctap/rest/getlist_function.dart';
+import 'package:thuctap/utils.dart';
+
+import '../../components/dropdownbutton.dart';
+import 'borrowbooklist.dart';
 
 class AddBorrowBook extends StatefulWidget {
    AddBorrowBook({super.key});
@@ -13,18 +22,67 @@ _AddBorrowBookState createState() => _AddBorrowBookState();
 
 class _AddBorrowBookState extends State<AddBorrowBook> {
   //controller
+  late List danhsachmadocgia=[];
+  late List danhsachmaphieumuon=[];
+  late List danhsachmasach=[];
+  BookBorrow bookBorrow=BookBorrow();
+  late bool _isLoading = true;
+  String? selecteddocgia,selectedphieumuon,selectedmasach;
+
+
   final TextEditingController namebookController = TextEditingController();
-  final TextEditingController authornameController = TextEditingController();
-  final TextEditingController loanslipController = TextEditingController();
-  final TextEditingController IDbookController = TextEditingController();
-  final TextEditingController pictureAddBorrowBookController = TextEditingController();
-   String? imageURL;
+
   //butonadd
-  void addsachmuon(){
-
+  void addsachmuon()async{
+  bookBorrow.bookname=namebookController.text;
+  bookBorrow.idreader=selecteddocgia!;
+  bookBorrow.idbook=selectedmasach!;
+  bookBorrow.loanid=selectedphieumuon!;
+  await insertBookborrow(bookBorrow);
+  List<BookBorrow> bookList= await fetchBookBorrow();
+  Navigator.push(context, MaterialPageRoute(builder: (context)=>ListBorrowBook(items: bookList,)));
   }
-
-
+  void getListmasach()async{
+    try {
+      _isLoading = true;
+      danhsachmasach = await fetchListName("${Utils.baseUrl}/sachmuon/masach","masach");
+      setState(() {
+        _isLoading = false; // Đặt trạng thái tải dữ liệu thành false khi đã tải xong
+      });
+    } catch (e) {
+      print('Error fetching loan id: $e');
+    }
+  }
+  void getListmatacgia()async{
+    try {
+      _isLoading = true;
+      danhsachmadocgia = await fetchListName("${Utils.baseUrl}/sachmuon/madocgia","madocgia");
+      setState(() {
+        _isLoading = false; // Đặt trạng thái tải dữ liệu thành false khi đã tải xong
+      });
+    } catch (e) {
+      print('Error fetching loan id: $e');
+    }
+  }
+  void getListmaphieumuon()async{
+    try {
+      _isLoading = true;
+      danhsachmaphieumuon = await fetchListName("${Utils.baseUrl}/sachmuon/maphieumuon","maphieu");
+      setState(() {
+        _isLoading = false; // Đặt trạng thái tải dữ liệu thành false khi đã tải xong
+      });
+    } catch (e) {
+      print('Error fetching loan id: $e');
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getListmaphieumuon();
+    getListmasach();
+    getListmatacgia();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,55 +140,40 @@ class _AddBorrowBookState extends State<AddBorrowBook> {
                   MyTextField(controller: namebookController, hintText: 'Tên Loại Sách', obScureText: false),
                   const SizedBox(height: 10),
                   Text('Tên Đọc Giả' , style: TextStyle(fontWeight: FontWeight.bold)),
-                  MyTextField(controller: authornameController, hintText: 'Tên Loại Sách', obScureText: false),
+                          ListItems(items: danhsachmadocgia, onChanged: (newvalue){
+                            for(int i=0;i<danhsachmadocgia.length;i++){
+                              if(equal(danhsachmadocgia![i], newvalue)){
+                                setState(() {
+                                  selecteddocgia=newvalue;
+                                });
+                              }
+                            }
+                          },),
                   const SizedBox(height: 10),
                   Text('Mã Phiếu Mượn' , style: TextStyle(fontWeight: FontWeight.bold)),
-                  MyTextField(controller: loanslipController, hintText: 'Tên Loại Sách', obScureText: false),
+                          ListItems(items: danhsachmaphieumuon, onChanged: (newvalue){
+                            for(int i=0;i<danhsachmaphieumuon.length;i++){
+                              if(equal(danhsachmaphieumuon![i], newvalue)){
+                                setState(() {
+                                  selectedphieumuon=newvalue;
+                                });
+                              }
+                            }
+                          },),
                   const SizedBox(height: 10),
                   Text('Mã Sách' , style: TextStyle(fontWeight: FontWeight.bold)),
-                  MyTextField(controller: IDbookController, hintText: 'Tên Loại Sách', obScureText: false),
-                  const SizedBox(height: 10),
-                  Text('Hình Ảnh', style: TextStyle(fontWeight: FontWeight.bold)),
-                          MyTextField(
-                            controller: pictureAddBorrowBookController,
-                            hintText: 'Link Hình Ảnh',
-                            obScureText: false,
-                            onChanged: (value) {
-                              
-                             setState(() {
-                                // Kiểm tra xem đường dẫn có hợp lệ không
-                                Uri? uri = Uri.tryParse(value);
-                                if (uri != null && uri.isAbsolute) {
-                                  // Nếu hợp lệ, gán vào imageURL
-                                  imageURL = value;
-                                   const SizedBox(height: 10);
-                          // Hiển thị hình ảnh nếu có
-                     
-                          if (imageURL != null && imageURL!.isNotEmpty)
-                            // ignore: curly_braces_in_flow_control_structures
-                            Image.network(
-                              imageURL!,
-                              height: 100,
-                              width: 50,
-                          
-                            );
-                                } else {
-                                  // Nếu không hợp lệ, gán imageURL thành null
-                                  imageURL = null;
-                                    Image.network(
-                              '',
-                              height: 100,
-                              width: 50,
-                          
-                            );
-                                }
-                              });
-                            },
-                          ),
+                          ListItems(items: danhsachmasach, onChanged: (newvalue){
+                            for(int i=0;i<danhsachmasach.length;i++){
+                              if(equal(danhsachmasach![i], newvalue)){
+                                setState(() {
+                                  selectedmasach=newvalue;
+                                });
+                              }
+                            }
+                          },),
                           MyButton(
-                           onTap: addsachmuon,
-                          text: 'Thêm Sách Mượn',
-
+                            onTap: addsachmuon,
+                            text: 'Thêm Sách',
                           ),
                         ],
                       ),

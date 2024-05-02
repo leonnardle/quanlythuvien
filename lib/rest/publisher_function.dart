@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../model/publisher.dart';
 import '../utils.dart';
+import 'getlist_function.dart';
 
 Future<void> updatePublisher(Publisher publisher) async {
   try {
@@ -78,6 +79,14 @@ Future<List<Publisher>> fetchPublishers() async {
   final response = await http.get(Uri.parse('${Utils.baseUrl}/nhaxuatban'));
   if (response.statusCode == 200) {
     return parsePublishers(response.body);
+  } else {
+    throw Exception('unable connect to api');
+  }
+}
+Future<List<String>> fetchnamePublisher() async {
+  final response = await http.get(Uri.parse('${Utils.baseUrl}/sach/publisherlist'));
+  if (response.statusCode == 200) {
+    return parsetypeName(response.body,"tennxb");
   } else {
     throw Exception('unable connect to api');
   }

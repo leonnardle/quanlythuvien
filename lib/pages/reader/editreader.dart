@@ -44,12 +44,10 @@ class _EditReaderState extends State<EditReader> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(widget.reader.id);
     nameReaderController=TextEditingController(text: widget.reader.name);
     emailReaderController=TextEditingController(text: widget.reader.email);
     phoneReaderController=TextEditingController(text: widget.reader.phonenumber);
     getList();
-    print(widget.reader.id);
 
   }
   void getList() async {

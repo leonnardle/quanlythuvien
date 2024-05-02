@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:thuctap/model/author.dart';
 import '../utils.dart';
+import 'getlist_function.dart';
 
 List<Author> parseAuthor(String responseBody) {
   final parsed = json.decode(responseBody)['data'] as List<dynamic>;
@@ -82,5 +83,13 @@ Future<void> deleteAuthor(Author book) async {
     }
   } catch (e) {
     print('Đã xảy ra lỗi khi gửi yêu cầu xóa loại sách: $e');
+  }
+}
+Future<List<String>> fetchidAuthor() async {
+  final response = await http.get(Uri.parse('${Utils.baseUrl}/sach/authorlist'));
+  if (response.statusCode == 200) {
+    return parsetypeName(response.body,"matacgia");
+  } else {
+    throw Exception('unable connect to api');
   }
 }

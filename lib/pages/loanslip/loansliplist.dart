@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/buttonadd.dart';
-import 'package:thuctap/pages/book/addBook.dart';
-import 'package:thuctap/pages/book/editBook.dart';
 import 'package:thuctap/pages/loanslip/addloanslip.dart';
 import 'package:thuctap/pages/loanslip/editloanslip.dart';
+import 'package:thuctap/rest/loanslip_function.dart';
+
+import '../../function/showDialog.dart';
+import '../../model/loanslip.dart';
 
 class ListLoanSlip extends StatefulWidget {
-  const ListLoanSlip({Key? key});
+  late List<LoanSlip>? items;
+
+   ListLoanSlip({Key? key,required this.items});
    _ListLoanSlipState createState() => _ListLoanSlipState();
 }
 
@@ -56,8 +60,9 @@ class _ListLoanSlipState extends State<ListLoanSlip> {
           Positioned.fill(
             top: 50,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: widget.items!.length,
               itemBuilder: (context, index) {
+                LoanSlip loanslip=widget.items![index];
                 return GestureDetector(
                   child: Card(
                     margin:
@@ -66,17 +71,7 @@ class _ListLoanSlipState extends State<ListLoanSlip> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          // Phần bên trái là ảnh sách
-                          Container(
-                            width: 80,
-                            height: 120,
-                            child: Image.network(
-                              "https://hoc10.monkeyuni.net/E_Learning/page_public/weNu4P5lGC23ozvy58eXenxvxfUWyyqg.jpg",
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          SizedBox(width: 20), // Khoảng cách giữa ảnh sách và thông tin sách
-                          // Phần bên phải là thông tin sách
+
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,16 +83,13 @@ class _ListLoanSlipState extends State<ListLoanSlip> {
                                     fontSize: 16,
                                   ),
                                 ),
+                                Text('mã phiếu: ${loanslip.id}'),
                                 SizedBox(height: 4),
-                                Text('Tên Đọc Giả: Tên sách ở đây'),
+                                Text('mã Đọc Giả:  ${loanslip.idreader}'),
                                 SizedBox(height: 4),
-                                Text('Mã Sách: Nhà xuất bản ở đây'),
+                                Text('Mã Sách:  ${loanslip.idBook}'),
                                 SizedBox(height: 4),
-                                Text('Trạng Thái: Chi tiết sách ở đây'),
-                                SizedBox(height: 4),
-                                Text('Ngày Mượn: Tác giả ở đây'),
-                                SizedBox(height: 4),
-                                Text('Ngày Trả: Thể loại ở đây'),
+                                Text('Ngày Mượn:  ${loanslip.loanDay}'),
                                 
                               ],  
                             ),    
@@ -106,14 +98,27 @@ class _ListLoanSlipState extends State<ListLoanSlip> {
                             onPressed: () {
                               Navigator.push(
                                 context, MaterialPageRoute(
-                                  builder: (context) => EditLoanSlip()));
+                                  builder: (context) => EditLoanSlip(book: loanslip,)));
                             },
                             icon: Icon(Icons.edit),
                           ),
                            IconButton(
                             onPressed: () {
                               // Xử lý sự kiện xóa sách
-                            },
+                              showDeleteConfirmationDialog(context, (confirm) async {
+                                if(confirm){
+                                  await deleteloanslip(widget.items![index]);
+                                  LoanSlip? book = widget.items?[index];
+                                  if (book != null) {
+                                    setState(() {
+                                      widget.items?.removeAt(index);
+                                    });
+                                  }
+
+                                }
+                              }
+
+                              );},
                             icon: Icon(Icons.delete),
                           ),
                         ],  

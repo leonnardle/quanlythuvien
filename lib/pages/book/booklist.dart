@@ -3,9 +3,12 @@ import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/buttonadd.dart';
 import 'package:thuctap/pages/book/addBook.dart';
 import 'package:thuctap/pages/book/editBook.dart';
+import 'package:thuctap/rest/booktype_function.dart';
 
 import '../../model/book.dart';
 import '../../rest/book_function.dart';
+import '../../rest/getlist_function.dart';
+import '../../utils.dart';
 
 class ListBook extends StatefulWidget {
   late List<Book>? items;
@@ -15,11 +18,27 @@ class ListBook extends StatefulWidget {
   _ListBookState createState() => _ListBookState();
 }
 class _ListBookState extends State<ListBook> {
-
+ late String booktype;
+ late List<String> list;
+ void getListname() async {
+   List<String> result = await fetchListName('${Utils.baseUrl}/sach/tenloaisach',"tenloaisach");
+   setState(() {
+     list = result;
+   });
+ }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getListname();
+  }
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    if (widget.items == null || widget.items!.isEmpty) {
+     return CircularProgressIndicator();
+   }else {
+      return Scaffold(
       drawer: NavBar(),
       appBar: AppBar(
         title: Text('Danh Sách Sách'),
@@ -62,112 +81,132 @@ class _ListBookState extends State<ListBook> {
             child: ListView.builder(
               itemCount: widget.items?.length,
               itemBuilder: (context, index) {
-                final book=widget.items?[index];
-                return GestureDetector(
-                  child: Card(
-                    margin:
-                        EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          // Phần bên trái là ảnh sách
-                          Container(
-                            width: 80,
-                            height: 120,
-                            child: Image.network(
-                            book!.image,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          SizedBox(width: 20), // Khoảng cách giữa ảnh sách và thông tin sách
-                          // Phần bên phải là thông tin sách
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-
-                                Text(
-                                  'Sách ${ book?.name}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-
-                                SizedBox(height: 4),
-                                Text(book!.publisher),
-                                SizedBox(height: 4),
-                                Text(book!.author),
-                                SizedBox(height: 4),
-                                Text(book!.genre),
-                                SizedBox(height: 4),
-                                Text(book!.description),
-
-                              ],  
-                            ),    
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              Book? editbook=widget.items?[index];
-                              if (editbook != null) {
-                                Navigator.push(
-                                    context, MaterialPageRoute(
-                                    builder: (context) => EditBook(book:editbook)));
-                              }
-
-                            },
-                            icon: Icon(Icons.edit),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Xác nhận xóa sách"),
-                                    content: Text("Bạn có chắc chắn muốn xóa cuốn sách này không?"),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(false); // Đóng dialog và trả về giá trị false (không xác nhận)
-                                        },
-                                        child: Text("Hủy"),
+                if (widget.items == null || widget.items!.isEmpty) {
+                  return CircularProgressIndicator();
+                }
+                final book = widget.items![index];
+                return FutureBuilder<String?>(
+                  future: getName(book.genre, "tenloaisach", '${Utils.baseUrl}/sach/tenloaisach/${book.genre}'),
+                  builder: (context, snapshot1) {
+                    if (snapshot1.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot1.hasError) {
+                      return Text('Error: ${snapshot1.error}');
+                    } else {
+                      String? typeName = snapshot1.data;
+                      return FutureBuilder<String?>(
+                        future: getName(book.author, "matacgia", '${Utils.baseUrl}/sach/authorname/${book.author}'),
+                        builder: (context, snapshot2) {
+                          if (snapshot2.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot2.hasError) {
+                            return Text('Error: ${snapshot2.error}');
+                          } else {
+                            String? authorName = snapshot2.data;
+                            return GestureDetector(
+                              child: Card(
+                                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      // Phần bên trái là ảnh sách
+                                      Container(
+                                        width: 80,
+                                        height: 120,
+                                        child: Image.network(
+                                          book.image,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                      TextButton(
+                                      SizedBox(width: 20),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Sách ${book.name}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Text("nhà xuất bản: ${book.publisher}"),
+                                            SizedBox(height: 4),
+                                            Text("Tác giả: $authorName"),
+                                            SizedBox(height: 4),
+                                            Text("tên sách: ${book.name}"),
+                                            SizedBox(height: 4),
+                                            Text("loại sách: $typeName"),
+                                          ],
+                                        ),
+                                      ),
+                                      IconButton(
                                         onPressed: () {
-                                          Navigator.of(context).pop(true); // Đóng dialog và trả về giá trị true (xác nhận)
+                                          Book? editbook = widget.items?[index];
+                                          if (editbook != null) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => EditBook(book: editbook),
+                                              ),
+                                            );
+                                          }
                                         },
-                                        child: Text("Xóa", style: TextStyle(color: Colors.red)),
+                                        icon: Icon(Icons.edit),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text("Xác nhận xóa sách"),
+                                                content: Text("Bạn có chắc chắn muốn xóa cuốn sách này không?"),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(false);
+                                                    },
+                                                    child: Text("Hủy"),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      Navigator.of(context).pop(true);
+                                                      await deleteBook(widget.items![index]);
+                                                      Book? book = widget.items?[index];
+                                                      if (book != null) {
+                                                        setState(() {
+                                                          widget.items?.removeAt(index);
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Text("Xóa", style: TextStyle(color: Colors.red)),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        icon: Icon(Icons.delete),
                                       ),
                                     ],
-                                  );
-                                },
-                              ).then((confirmed) async {
-                                if (confirmed == true) {
-                                  // Nếu người dùng xác nhận xóa sách
-                                  await deleteBook(widget.items![index]);
-                                  Book? book = widget.items?[index];
-                                  if (book != null) {
-                                    setState(() {
-                                      widget.items?.removeAt(index);
-                                    });
-                                  }
-                                }
-                              });
-                            },
-                            icon: Icon(Icons.delete),
-                          ),
-                        ],  
-                      ),
-                    ),
-                  ),
-                  onTap: () {
-                    // Xử lý sự kiện khi nhấn vào một sách
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                // Xử lý sự kiện khi nhấn vào một sách
+                              },
+                            );
+                          }
+                        },
+                      );
+                    }
                   },
                 );
               },
-            ),
+            )
           ),
           Positioned(
             bottom: 60,
@@ -186,5 +225,6 @@ class _ListBookState extends State<ListBook> {
         ],
       ),
     );
+    }
   }
 }

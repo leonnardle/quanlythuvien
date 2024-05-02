@@ -6,7 +6,11 @@ import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
 import 'package:thuctap/model/book.dart';
 import 'package:thuctap/rest/book_function.dart';
+import 'package:thuctap/rest/booktype_function.dart';
 
+import '../../components/dropdownbutton.dart';
+import '../../rest/author_function.dart';
+import '../../rest/publisher_function.dart';
 import 'booklist.dart';
 
 class AddBook extends StatefulWidget {
@@ -25,16 +29,21 @@ class _AddBookState extends State<AddBook> {
   final TextEditingController detailController = TextEditingController();
   final TextEditingController pictureAddBookController = TextEditingController();
   String? imageURL;
+  late List danhsachphieu=[];
+  late List danhsachnhaxuatban=[];
+  late List danhsachtacgia=[];
 
+  late bool _isLoading = true;
+  String? selectedloan,selectednhaxuatban,selectedtacgia;
   void addSach() async{
     if (imageURL != null && imageURL!.isNotEmpty) {
       // Thêm sách
       Book book=Book();
       book.setId(masachController.text);
       book.setName(namesachController.text);
-      book.setAuthor(authorController.text);
-      book.setPublisher(publisherController.text);
-      book.setGenre(genreController.text);
+      book.author=await updatenameAuthor(selectedtacgia!);
+      book.publisher=await updatenamePublisher(selectednhaxuatban!);
+      book.genre=await updateGenre(selectedloan!);
       book.setDescription(detailController.text);
       book.setImage(pictureAddBookController.text);
       await insertBook(book);
@@ -62,7 +71,49 @@ class _AddBookState extends State<AddBook> {
       );
     }
   }
+  void getList() async {
 
+    try {
+      _isLoading = true;
+      danhsachphieu = await fetchtypeName();
+      setState(() {
+        _isLoading = false; // Đặt trạng thái tải dữ liệu thành false khi đã tải xong
+      });
+    } catch (e) {
+      print('Error fetching loan id: $e');
+    }
+  }
+  void getListPublisher() async {
+    try {
+      _isLoading = true;
+      danhsachnhaxuatban = await fetchnamePublisher();
+      setState(() {
+        _isLoading = false; // Đặt trạng thái tải dữ liệu thành false khi đã tải xong
+      });
+    } catch (e) {
+      print('Error fetching loan id: $e');
+    }
+  }
+  void getListAuthor() async {
+    try {
+      _isLoading = true;
+      danhsachtacgia = await fetchidAuthor();
+      setState(() {
+        _isLoading = false; // Đặt trạng thái tải dữ liệu thành false khi đã tải xong
+      });
+    } catch (e) {
+      print('Error fetching loan id: $e');
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //get list for dropdown
+    getList();
+    getListPublisher();
+    getListAuthor();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,13 +173,37 @@ class _AddBookState extends State<AddBook> {
                           MyTextField(controller: namesachController, hintText: 'Tên Sách', obScureText: false),
                           const SizedBox(height: 10),
                           Text('Nhà Xuất Bản', style: TextStyle(fontWeight: FontWeight.bold)),
-                          MyTextField(controller: publisherController, hintText: 'Nhà Xuất Bản', obScureText: false),
+                          ListItems(items: danhsachnhaxuatban, onChanged: (newvalue){
+                            for(int i=0;i<danhsachnhaxuatban.length;i++){
+                              if(equal(danhsachnhaxuatban![i], newvalue)){
+                                setState(() {
+                                  selectednhaxuatban=newvalue;
+                                });
+                              }
+                            }
+                          },),
                           const SizedBox(height: 10),
                           Text('Tác Giả', style: TextStyle(fontWeight: FontWeight.bold)),
-                          MyTextField(controller: authorController, hintText: 'Tác Giả', obScureText: false),
+                          ListItems(items: danhsachtacgia, onChanged: (newvalue){
+                            for(int i=0;i<danhsachtacgia.length;i++){
+                              if(equal(danhsachtacgia![i], newvalue)){
+                                setState(() {
+                                  selectedtacgia=newvalue;
+                                });
+                              }
+                            }
+                          },),
                           const SizedBox(height: 10),
                           Text('Thể Loại', style: TextStyle(fontWeight: FontWeight.bold)),
-                          MyTextField(controller: genreController, hintText: 'Thể Loại', obScureText: false),
+                          ListItems(items: danhsachphieu, onChanged: (newvalue){
+                            for(int i=0;i<danhsachphieu.length;i++){
+                              if(equal(danhsachphieu![i], newvalue)){
+                                setState(() {
+                                  selectedloan=newvalue;
+                                });
+                              }
+                            }
+                          },),
                           const SizedBox(height: 10),
                           Text('Chi Tiết', style: TextStyle(fontWeight: FontWeight.bold)),
                           MyTextField(controller: detailController, hintText: 'Chi Tiết', obScureText: false),

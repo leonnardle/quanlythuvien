@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:thuctap/model/Employee.dart';
 import 'package:thuctap/model/author.dart';
 import 'package:thuctap/model/booktype.dart';
+import 'package:thuctap/model/borrowbook.dart';
+import 'package:thuctap/model/loanslip.dart';
 import 'package:thuctap/model/reader.dart';
 import 'package:thuctap/pages/author/authorlist.dart';
 import 'package:thuctap/pages/booktype/booktypelist.dart';
@@ -12,8 +14,10 @@ import 'package:thuctap/pages/loanslip/loansliplist.dart';
 import 'package:thuctap/pages/paymentslip/paymentsliplist.dart';
 import 'package:thuctap/pages/borrowbook/borrowbooklist.dart';
 import 'package:thuctap/rest/author_function.dart';
+import 'package:thuctap/rest/bookborrow_function.dart';
 import 'package:thuctap/rest/booktype_function.dart';
 import 'package:thuctap/rest/employee_function.dart';
+import 'package:thuctap/rest/loanslip_function.dart';
 import 'package:thuctap/rest/reader_function.dart';
 
 import '../model/book.dart';
@@ -116,12 +120,13 @@ class NavBar extends StatelessWidget {
           ),
           ListTile(
             title: Text('Quản Lý Sách Mượn'),
-            onTap: ()=> {
+            onTap: ()async {
+              List<BookBorrow> items=await fetchBookBorrow();
                Navigator.push(
                 context, MaterialPageRoute(
-                  builder:(context) => ListBorrowBook()
+                  builder:(context) => ListBorrowBook(items: items,)
                   )
-              )
+              );
             },
           ),
           ListTile(
@@ -137,12 +142,13 @@ class NavBar extends StatelessWidget {
           ),
           ListTile(
             title: Text('Quản Lý Phiếu Mượn'),
-           onTap: ()=> {
+           onTap: ()async {
+              List<LoanSlip> list=await fetchloanslip();
                Navigator.push(
                 context, MaterialPageRoute(
-                  builder:(context) => ListLoanSlip()
+                  builder:(context) => ListLoanSlip(items: list,)
                   )
-              )
+              );
             },
           ),
           ListTile(

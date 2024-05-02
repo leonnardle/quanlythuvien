@@ -20,6 +20,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           yield LoginFailure(error: 'login failed, status code: ${response.statusCode}');
         }
       } catch (error) {
+        print(error);
         yield LoginFailure(error: error.toString());
       }
     }

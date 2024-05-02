@@ -1,8 +1,6 @@
 class BookType {
   late String id;
   late String name;
-
-
   BookType();
 
   factory BookType.fromJson(Map<String, dynamic> data) {
@@ -11,6 +9,7 @@ class BookType {
     bookType.name = data['tenloaisach'] ?? '';
     return bookType;
   }
+
   void setName(String text) {
     name = text;
   }

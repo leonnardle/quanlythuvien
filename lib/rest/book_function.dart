@@ -25,6 +25,7 @@ Future<void> updateBook(Book book) async {
      fetchBooks();
 
     } else {
+      print(book.publisher);
       print('Đã xảy ra lỗi khi cập nhật sách cho ${book.id}');
     }
   } catch (e) {
@@ -89,5 +90,38 @@ Future<List<Book>> fetchBooks() async {
     return parseBooks(response.body);
   } else {
     throw Exception('unable connect to api');
+  }
+}
+Future<String> updateGenre(String genre)async{
+  final response = await http.get(Uri.parse('${Utils.baseUrl}/sach/tenloaisach2/$genre'));
+  if(response.statusCode==200){
+    final parsed = json.decode(response.body)['data'][0]['maloaisach'] as String;
+    return parsed;
+  }
+  else
+    {
+      throw Exception("unable connect api ");
+    }
+}
+Future<String> updatenameAuthor(String genre)async{
+  final response = await http.get(Uri.parse('${Utils.baseUrl}/sach/authorname/$genre'));
+  if(response.statusCode==200){
+    final parsed = json.decode(response.body)['data'][0]['matacgia'] as String;
+    return parsed;
+  }
+  else
+  {
+    throw Exception("unable connect api ");
+  }
+}
+Future<String> updatenamePublisher(String genre) async {
+  final response = await http.get(Uri.parse('${Utils.baseUrl}/sach/publishername/$genre'));
+  if(response.statusCode==200){
+    final parsed = json.decode(response.body)['data'][0]['tennxb'] as String;
+    return parsed;
+  }
+  else
+  {
+    throw Exception("unable connect api ");
   }
 }

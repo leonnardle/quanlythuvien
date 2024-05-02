@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:thuctap/model/booktype.dart';
 import 'package:http/http.dart' as http;
 import '../utils.dart';
+import 'getlist_function.dart';
 
 List<BookType> parseBookType(String responseBody) {
   final parsed = json.decode(responseBody)['data'] as List<dynamic>;
@@ -77,5 +78,14 @@ Future<void> deleteBooktype(BookType book) async {
     }
   } catch (e) {
     print('Đã xảy ra lỗi khi gửi yêu cầu xóa loại sách: $e');
+  }
+}
+
+Future<List<String>> fetchtypeName() async {
+  final response = await http.get(Uri.parse('${Utils.baseUrl}/sach/tenloaisach'));
+  if (response.statusCode == 200) {
+    return parsetypeName(response.body,"tenloaisach");
+  } else {
+    throw Exception('unable connect to api');
   }
 }
