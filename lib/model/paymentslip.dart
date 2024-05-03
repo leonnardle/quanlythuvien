@@ -1,12 +1,18 @@
+import 'Loanslip.dart';
+
 class PaySlip {
-  final String idSlip;
-  final String readerName;
-  final String idBook;
-  final bool status;
-  final DateTime loanDay;
-  final DateTime paymentDay; 
+  late String idSlip;
+  late String paymentDay;
+  late String idLoan;
 
 
-  PaySlip({required this.idSlip,required this.readerName,required this.idBook,required this.status,required this.loanDay,required this.paymentDay, 
-  });
+  PaySlip();
+  factory PaySlip.fromJson(Map<String, dynamic> data){
+    PaySlip paySlip=PaySlip();
+    paySlip.idSlip=data["maphieu"];
+    paySlip.paymentDay= parseDateTime(data['ngaytra'])?.toString() ?? '';
+    paySlip.idLoan=data["maphieumuon"];
+    return paySlip;
+  }
+
 }

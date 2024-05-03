@@ -28,7 +28,6 @@ class _AddLoanSlipState extends State<AddLoanSlip> {
   final TextEditingController LoanDayController = TextEditingController();
   final TextEditingController PaymentDayController = TextEditingController();
   late List danhsachmadocgia=[];
-  late List danhsachmatrangthai=["đang mượn","đã trả"];
   late List danhsachmasach=[];
   LoanSlip loanSlip=LoanSlip();
   late bool _isLoading = true;

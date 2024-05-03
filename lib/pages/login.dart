@@ -112,6 +112,25 @@ class _LoginPageState extends State<LoginPage> {
                         if(state is LoginSuccess){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=> MyHomePage(name: emailController.text,)));
                         }
+                        else if (state is LoginFailure){
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context)
+                              {
+                                return AlertDialog(
+                                  title: Text('Tài Khoản và mật khẩu không đúng , vui lòng thử lại'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              }
+                          );
+                        }
                       },
                       text: 'Đăng Nhập',
                     ),

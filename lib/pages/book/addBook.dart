@@ -214,37 +214,39 @@ class _AddBookState extends State<AddBook> {
                             hintText: 'Link Hình Ảnh',
                             obScureText: false,
                             onChanged: (value) {
-                              
-                             setState(() {
+
+                              setState(() {
                                 // Kiểm tra xem đường dẫn có hợp lệ không
                                 Uri? uri = Uri.tryParse(value);
                                 if (uri != null && uri.isAbsolute) {
                                   // Nếu hợp lệ, gán vào imageURL
                                   imageURL = value;
-                                   const SizedBox(height: 10);
-                          // Hiển thị hình ảnh nếu có
-                     
-                          if (imageURL != null && imageURL!.isNotEmpty)
-                            // ignore: curly_braces_in_flow_control_structures
-                            Image.network(
-                              imageURL!,
-                              height: 100,
-                              width: 50,
-                          
-                            );
+                                  const SizedBox(height: 10);
+                                  // Hiển thị hình ảnh nếu có
+
+
                                 } else {
                                   // Nếu không hợp lệ, gán imageURL thành null
                                   imageURL = null;
-                                    Image.network(
-                              '',
-                              height: 100,
-                              width: 50,
-                          
-                            );
+                                  Image.network(
+                                    '',
+                                    height: 100,
+                                    width: 50,
+
+                                  );
                                 }
                               });
                             },
                           ),
+                          const SizedBox(height: 10),
+                          if (imageURL != null && imageURL!.isNotEmpty)
+                          // ignore: curly_braces_in_flow_control_structures
+                            Image.network(
+                              imageURL!,
+                              height: 100,
+                              width: 50,
+
+                            ),
                          
                           MyButton(
                             onTap: addSach,

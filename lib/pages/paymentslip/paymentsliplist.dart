@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/buttonadd.dart';
+import 'package:thuctap/model/paymentslip.dart';
 import 'package:thuctap/pages/book/addBook.dart';
 import 'package:thuctap/pages/book/editBook.dart';
 import 'package:thuctap/pages/paymentslip/addpaymentslip.dart';
 import 'package:thuctap/pages/paymentslip/editpaymentslip.dart';
+import 'package:thuctap/rest/paymentslip_function.dart';
+
+import '../../function/showDialog.dart';
 
 class ListPaymentSLip extends StatefulWidget {
-  const ListPaymentSLip({Key? key});
+  late List<PaySlip>? items;
+
+   ListPaymentSLip({Key? key,required this.items});
    _ListPaymentSLipState createState() => _ListPaymentSLipState();
 }
 class _ListPaymentSLipState extends State<ListPaymentSLip> {
@@ -54,8 +60,9 @@ class _ListPaymentSLipState extends State<ListPaymentSLip> {
           Positioned.fill(
             top: 50,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: widget.items!.length,
               itemBuilder: (context, index) {
+                PaySlip payslip=widget.items![index];
                 return GestureDetector(
                   child: Card(
                     margin:
@@ -76,15 +83,11 @@ class _ListPaymentSLipState extends State<ListPaymentSLip> {
                                   ),
                                 ),
                                 SizedBox(height: 4),
-                                Text('Tên Đọc Giả: '),
+                                Text('mã phiếu: ${payslip.idSlip}'),
                                 SizedBox(height: 4),
-                                Text('Mã Sách: '),
+                                Text('Ngày trả: ${payslip.paymentDay}'),
                                 SizedBox(height: 4),
-                                Text('Trạng Thái: '),
-                                SizedBox(height: 4),
-                                Text('Ngày Mượn: '),
-                                SizedBox(height: 4),
-                                Text('Ngày Trả: '),
+                                Text('mã phiêu mượn :  ${payslip.idLoan}'),
                               ],  
                             ),    
                           ),
@@ -92,13 +95,24 @@ class _ListPaymentSLipState extends State<ListPaymentSLip> {
                             onPressed: () {
                               Navigator.push(
                                 context, MaterialPageRoute(
-                                  builder: (context) => EditPaymentSlip()));
+                                  builder: (context) => EditPaymentSlip(book:payslip,)));
                             },
                             icon: Icon(Icons.edit),
                           ),
                            IconButton(
                             onPressed: () {
-                              // Xử lý sự kiện xóa sách
+                              showDeleteConfirmationDialog(context, (confirm) async {
+                                if(confirm){
+                                  await deletepayslip(widget.items![index]);
+                                  PaySlip? book = widget.items?[index];
+                                  if (book != null) {
+                                    setState(() {
+                                      widget.items?.removeAt(index);
+                                    });
+                                  }
+
+                                }
+                              });
                             },
                             icon: Icon(Icons.delete),
                           ),

@@ -29,11 +29,11 @@ class _EditLoanSlipState extends State<EditLoanSlip> {
   late List danhsachmadocgia=[];
   late List danhsachmasach=[];
   late bool _isLoading = true;
-  late DateTime _selectedloanDate = DateTime.now(); // Khởi tạo biến với ngày hiện tại
+  late DateTime _selectedloanDate = DateTime.now();
   late String? selectedmasach,selectedstatus,selectedmadocgia;
   //butonadd
   void addphieumuon() async{
-  widget.book.loanDay=_selectedloanDate!.toString();
+  widget.book.loanDay=LoanDayController.text;
   widget.book.idreader=selectedmadocgia!;
   widget.book.idBook=selectedmasach!;
   await updateloanslip(widget.book);

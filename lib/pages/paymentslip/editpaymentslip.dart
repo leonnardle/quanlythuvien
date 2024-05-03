@@ -1,28 +1,77 @@
+import 'dart:js_util';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:thuctap/components/navbar.dart';
 import 'package:thuctap/components/textfield.dart';
 import 'package:thuctap/components/button.dart';
+import 'package:thuctap/model/paymentslip.dart';
+import 'package:thuctap/pages/paymentslip/paymentsliplist.dart';
+import 'package:thuctap/rest/paymentslip_function.dart';
+
+import '../../components/dropdownbutton.dart';
+import '../../rest/getlist_function.dart';
+import '../../utils.dart';
 
 class EditPaymentSlip extends StatefulWidget {
-   EditPaymentSlip({super.key});
+  PaySlip book;
+
+  EditPaymentSlip({super.key,required this.book});
  _EditPaymentSlipState createState() => _EditPaymentSlipState();
 }
 class _EditPaymentSlipState extends State<EditPaymentSlip> {
-  //controller
-  final TextEditingController readerNameController = TextEditingController();
-  final TextEditingController IDBookController = TextEditingController();
-  final TextEditingController StatusController = TextEditingController();
-  final TextEditingController LoanDayController = TextEditingController();
-  final TextEditingController PaymentDayController = TextEditingController();
-  
-  //butonadd
-  void editphieutra(){
+  late  TextEditingController payDayController = TextEditingController();
 
+  //controller
+  late List danhsachmaphieumuon=[];
+  late bool _isLoading = true;
+  late String? selectedmaphieumuon;
+  late DateTime _selectedpayDate=DateTime.now();
+  void getListmaphieumuon()async{
+    try {
+      _isLoading = true;
+      danhsachmaphieumuon = await fetchListName("${Utils.baseUrl}/sachmuon/maphieumuon","maphieu");
+      setState(() {
+        _isLoading = false; // Đặt trạng thái tải dữ liệu thành false khi đã tải xong
+      });
+    } catch (e) {
+      print('Error fetching loan id: $e');
+    }
+  }
+  Future<void> _selectDate(BuildContext context,TextEditingController controller,DateTime dateTime) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != dateTime) {
+      setState(() {
+        dateTime = picked;
+        payDayController.text = picked.toString();
+      });
+    }
+  }
+  //butonadd
+  void editphieutra() async{
+  widget.book.paymentDay=payDayController.text;
+  widget.book.idLoan=selectedmaphieumuon.toString();
+  print(payDayController.text);
+  await updatepayslip(widget.book);
+  List<PaySlip> list=await fetchpayslip();
+  Navigator.push(context, MaterialPageRoute(builder: (context)=>ListPaymentSLip(items: list,)));
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    payDayController=TextEditingController(text:widget.book.paymentDay);
+    getListmaphieumuon();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,20 +126,30 @@ class _EditPaymentSlipState extends State<EditPaymentSlip> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                  Text('Tên Đọc Giả' , style: TextStyle(fontWeight: FontWeight.bold)),
-                  MyTextField(controller: readerNameController, hintText: 'Tên Nhà Xuất bản', obScureText: false),
-                  const SizedBox(height: 10),
-                  Text('Mã Sách' , style: TextStyle(fontWeight: FontWeight.bold)),
-                  MyTextField(controller: IDBookController, hintText: 'Tên Khu Vực', obScureText: false),
-                  const SizedBox(height: 10),
-                  Text('Trạng Thái' , style: TextStyle(fontWeight: FontWeight.bold)),
-                  MyTextField(controller: StatusController, hintText: 'Tên Khu Vực', obScureText: false),
-                  const SizedBox(height: 10),
-                  Text('Ngày Mượn' , style: TextStyle(fontWeight: FontWeight.bold)),
-                  MyTextField(controller: LoanDayController, hintText: 'Tên Khu Vực', obScureText: false),
-                  const SizedBox(height: 10),
-                  Text('Ngày Trả' , style: TextStyle(fontWeight: FontWeight.bold)),
-                  MyTextField(controller: PaymentDayController, hintText: 'Tên Khu Vực', obScureText: false),
+                          Text('mã phiếu mượn' , style: TextStyle(fontWeight: FontWeight.bold)),
+
+                          ListItems(items: danhsachmaphieumuon, onChanged: (newvalue){
+                            for(int i=0;i<danhsachmaphieumuon.length;i++){
+                              if(equal(danhsachmaphieumuon![i], newvalue)){
+                                setState(() {
+                                  selectedmaphieumuon=newvalue;
+                                });
+                              }
+                            }
+                          },),
+                          Text('Ngày tra' , style: TextStyle(fontWeight: FontWeight.bold)),
+                          GestureDetector(
+                            onTap: () {
+                              _selectDate(context,payDayController,_selectedpayDate!);
+                            },
+                            child: AbsorbPointer(
+                              child: MyTextField(
+                                controller: payDayController,
+                                hintText: 'ngày mượn',
+                                obScureText: false,
+                              ),
+                            ),
+                          ),
                   const SizedBox(height: 10),
 
                           MyButton(

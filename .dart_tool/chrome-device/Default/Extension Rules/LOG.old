@@ -1,11 +1,10 @@
-2024/04/25-07:44:43.136 48c8 Reusing MANIFEST C:\Users\trung\AppData\Local\Temp\flutter_tools.6bf3bce4\flutter_tools_chrome_device.698d2c17\Default\Extension Rules/MANIFEST-000001
-2024/04/25-07:44:43.137 48c8 Recovering log #3
-2024/04/25-07:44:43.137 48c8 Level-0 table #3: started
-2024/04/25-07:44:43.139 48c8 Level-0 table #3: 0 bytes OK
-2024/04/25-07:44:43.139 48c8 Recovering log #6
-2024/04/25-07:44:43.139 48c8 Level-0 table #4: started
-2024/04/25-07:44:43.139 48c8 Level-0 table #4: 0 bytes OK
-2024/04/25-07:44:43.140 48c8 Recovering log #10
-2024/04/25-07:44:43.140 48c8 Reusing old log C:\Users\trung\AppData\Local\Temp\flutter_tools.6bf3bce4\flutter_tools_chrome_device.698d2c17\Default\Extension Rules/000010.log 
-2024/04/25-07:44:43.145 48c8 Delete type=0 #3
-2024/04/25-07:44:43.147 48c8 Delete type=0 #6
+2024/05/03-13:08:10.372 54a0 Log #3: 0 ops saved to Table #16 OK
+2024/05/03-13:08:10.421 54a0 Archiving C:\Users\trung\AppData\Local\Temp\flutter_tools.f0f853db\flutter_tools_chrome_device.9eec9dd4\Default\Extension Rules/000003.log: OK
+2024/05/03-13:08:10.422 54a0 Log #6: 0 ops saved to Table #17 OK
+2024/05/03-13:08:10.423 54a0 Archiving C:\Users\trung\AppData\Local\Temp\flutter_tools.f0f853db\flutter_tools_chrome_device.9eec9dd4\Default\Extension Rules/000006.log: OK
+2024/05/03-13:08:10.423 54a0 Log #10: 0 ops saved to Table #18 OK
+2024/05/03-13:08:10.425 54a0 Archiving C:\Users\trung\AppData\Local\Temp\flutter_tools.f0f853db\flutter_tools_chrome_device.9eec9dd4\Default\Extension Rules/000010.log: OK
+2024/05/03-13:08:10.425 54a0 Log #15: 0 ops saved to Table #19 OK
+2024/05/03-13:08:10.431 54a0 Archiving C:\Users\trung\AppData\Local\Temp\flutter_tools.f0f853db\flutter_tools_chrome_device.9eec9dd4\Default\Extension Rules/000015.log: OK
+2024/05/03-13:08:10.435 54a0 Archiving C:\Users\trung\AppData\Local\Temp\flutter_tools.f0f853db\flutter_tools_chrome_device.9eec9dd4\Default\Extension Rules/MANIFEST-000001: OK
+2024/05/03-13:08:10.443 54a0 **** Repaired leveldb C:\Users\trung\AppData\Local\Temp\flutter_tools.f0f853db\flutter_tools_chrome_device.9eec9dd4\Default\Extension Rules; recovered 0 files; 0 bytes. Some data may have been lost. ****

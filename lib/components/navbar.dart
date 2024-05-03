@@ -4,6 +4,7 @@ import 'package:thuctap/model/author.dart';
 import 'package:thuctap/model/booktype.dart';
 import 'package:thuctap/model/borrowbook.dart';
 import 'package:thuctap/model/loanslip.dart';
+import 'package:thuctap/model/paymentslip.dart';
 import 'package:thuctap/model/reader.dart';
 import 'package:thuctap/pages/author/authorlist.dart';
 import 'package:thuctap/pages/booktype/booktypelist.dart';
@@ -18,6 +19,7 @@ import 'package:thuctap/rest/bookborrow_function.dart';
 import 'package:thuctap/rest/booktype_function.dart';
 import 'package:thuctap/rest/employee_function.dart';
 import 'package:thuctap/rest/loanslip_function.dart';
+import 'package:thuctap/rest/paymentslip_function.dart';
 import 'package:thuctap/rest/reader_function.dart';
 
 import '../model/book.dart';
@@ -153,12 +155,13 @@ class NavBar extends StatelessWidget {
           ),
           ListTile(
             title: Text('Quản Lý Phiếu Trả'),
-             onTap: ()=> {
+             onTap: ()async {
+              List<PaySlip> list=await fetchpayslip();
                Navigator.push(
                 context, MaterialPageRoute(
-                  builder:(context) => ListPaymentSLip()
+                  builder:(context) => ListPaymentSLip(items: list,)
                   )
-              )
+              );
             },
           ),
           ],
